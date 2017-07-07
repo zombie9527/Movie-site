@@ -1,0 +1,39 @@
+extends ../layout
+
+block content
+    include header
+    .col-md-9.col-sm-8.text-center
+        table.table-bordered.table-hover(style="width:100%")
+            thead
+                tr.h4
+                    th.text-center 书名
+                    th.text-center 价格
+                    th.text-center 封面图片
+                    th.text-center 分类
+                    th.text-center 操作
+            -for(var i = 0;i<10;i++){
+                -item = data[i];
+                tr(data-id="#{item.id}")
+                    td #{item.name}
+                    td #{item.price}
+                    td 
+                        img(src="/bookStore/images/"+"#{item.img_url}" alt="#{item.img_url}" height=35 width=30)
+                    td #{item.category}
+                    td(style="width:20%")
+                        button.btn-defult.btn-xs.revise(style="margin-right:20px;" type="button") 修改
+                        button.btn-defult.btn-xs.delete 删除
+            -}
+        nav
+            ul.pagination
+                li.disabled
+                    a(href="javascript:pre();") &laquo;
+                li.active
+                    a(href="javascript:;") 1
+                -for(var i = 0;i<(data.length-1)/10;i++){
+                li
+                    a(href="javascript:;") #{i+2}
+                -}
+                li
+                    a(href="javascript:next();") &raquo;
+        -var allbooks = data;
+    script(src="js/addbook.js")

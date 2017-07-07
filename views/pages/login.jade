@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+    .modal.show
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    h1.text-center.text-primary 后台管理
+                .modal-body
+                    form(action="").form.center-block
+                        p#tip.text-center
+                        .form-group
+                            input(type="text" placeholder="登录名").form-control.input-lg
+                        .form-group
+                            input(type="password" placeholder="登录密码").form-control.input-lg
+                        form-group
+                            button.btn.btn-primary.btn-lg.btn-block(type = "submit") 登录
+                            br
+                            p
+                                span
+                                    a(href="JavaScript:;") 找回密码
+                                span
+                                    a(href="JavaScript:;").pull-right 注册
+    script(src="js/login.js")

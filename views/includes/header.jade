@@ -1,0 +1,22 @@
+-var genres = ["index","category","users","movie"],title = ["主页","电影分类","注册用户","电影管理",];//
+header.bg-light.dk.header.navbar.navbar-fixed-top-xs
+    .navbar-header(style="width:100%")
+        a.btn.btn-link.visible-xs(data-toggle="classL:nav-off-screen" data-target="#nav")
+            i.glyphicon.glyphicon-list
+        a.navbar-brand(data-toggle="fullscreen")
+            span 电影后台管理
+        a.btn.btn-link.pull-right
+            span #{name}
+.col-md-3.col-sm-4.col-lg-2
+    aside.bg-light.lter.nav-md.aside-md.hidden-print#nav
+        nav.nav-primary
+            ul.nav.text-center
+                -for(var i = 0;i<genres.length;i++){
+                    -if( focus==genres[i] ){
+                    li.active
+                        a(href="/admin/"+genres[i]) #{title[i]}
+                    -} else{
+                    li
+                        a(href="/admin/"+genres[i]) #{title[i]}
+                    -}
+                -}

@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+    include ../includes/header
+    .col-md-9.col-sm-8.text-center#contents(style="overflow:auto;min-height:500px;" )
+        table.table-bordered.table-hover(style="width:100%")
+            thead
+                tr.h4
+                    th.text-center 电影名
+                    th.text-center 价格
+                    th.text-center 封面图片
+                    th.text-center 分类
+                    th.text-center 操作
+            tbody#tabContent
+    .modal.fade#addMovie(role="dialog")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    button.close(type="button" data-dismiss="modal" aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h4.modal-title 添加分类
+                .modal-body
+                    form
+                        .form-group
+                            label(for="categoryName") 分类名
+                            input.form-control#categoryName(placeholder="新分类名")
+                        .form-group
+                            label(for="includeCategory") 分类名(多个以空格隔开)
+                            input.form-control#includeCategory(placeholder="包含分类名")
+                .modal-footer
+                    button.btn.btn-default(type="button" data-dismiss="modal") 取消
+                    button.btn.btn-primary#addCateForm(type="button") 添加
+    include ../includes/footer
+
+    script(src="./js/addbook.js")

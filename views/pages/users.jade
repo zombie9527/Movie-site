@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+    include ../includes/header
+    .col-md-9.col-sm-8.text-center#contents(style="overflow:auto;min-height:500px;" )
+        table.table-bordered.table-hover(style="width:100%")
+            thead
+                tr.h4
+                    th.text-center 用户名
+                    th.text-center 生日
+                    th.text-center 密码
+                    th.text-center 注册日期
+                    th.text-center 最后登录时间
+    include ../includes/footer
+
+    script(src="./js/addusers.js")

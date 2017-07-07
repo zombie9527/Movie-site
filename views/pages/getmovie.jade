@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+    include ../includes/header
+    .col-md-9.text-center(style="overflow:auto;min-height:500px;" )
+        form(style="text-align:left; margin:2rem")
+            .form-group
+                h4 获取内容
+                label.radio-inline
+                    input#inlineRadio1(type="radio" checked name="inlineRadioOptions" value="0") 
+                    span 新片
+                label.radio-inline
+                    input#inlineRadio(type="radio" name="inlineRadioOptions" value="1")  
+                    span Top250
+                label.radio-inline
+                    input#inlineRadio2(type="radio" name="inlineRadioOptions" value="2") 
+                    span  即将上映
+                label.radio-inline
+                    input#inlineRadio2(type="radio" name="inlineRadioOptions" value="3") 
+                    span  其他
+                div#urlbox(style="display:none;margin-top:1rem;")
+                    span url地址
+                    input#urladdress
+            .form-group
+                label 属性
+                br
+                span 起始位置
+                input.form-control#startPosition(type="number" style="width:30%;display:inline-block;margin:0 1rem;")
+                span 搜索个数
+                input.form-control#getCount(type="number" style="width:30%;display:inline-block;margin:0 1rem;")
+            .form-group
+                button.btn.btn-primary#addMovieBtn(type="button") 添加
+        textarea.form-control#resultBox(disabled rows="5" style="margin:2rem;width:90%")
+    include ../includes/footer
+
+    script(src="./js/addmovie.js")

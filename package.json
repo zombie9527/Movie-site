@@ -1,0 +1,26 @@
+{
+  "name": "movie",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zombie",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.1",
+    "cheerio": "^0.22.0",
+    "echarts": "^3.5.2",
+    "element-ui": "^1.2.4",
+    "encoding": "^0.1.12",
+    "express": "^4.15.2",
+    "https": "^1.0.0",
+    "jade": "^1.11.0",
+    "md5": "^2.2.1",
+    "vue": "^2.2.4",
+    "vue-resource": "^1.2.1"
+  }
+}

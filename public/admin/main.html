@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>movie</title>
+    <link rel="stylesheet" href="css/elementUI.css">
+    <!--<link rel="stylesheet" href="../node_modules/element-ui/lib/theme-default/index.css">-->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <div class="header">
+        <el-row>
+            <el-col :span="12">
+                <h1>太大电影</h1>
+            </el-col>
+            <el-col :span="12">
+                <p>
+                    <a href="#" @click="visible = true;formTitle= '注册'">注册</a>
+                    <span>&nbsp;|&nbsp;</span>
+                    <a href="#" @click="visible = true;formTitle= '登录'">登录</a>
+                </p>
+            </el-col>
+        </el-row>
+    </div>
+</body>
+
+</html>

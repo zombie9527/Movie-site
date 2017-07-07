@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>movie</title>
+    <link rel="stylesheet" href="css/elementUI.css">
+    <!--<link rel="stylesheet" href="../node_modules/element-ui/lib/theme-default/index.css">-->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <div class="header">
+        <el-row>
+            <el-col :span="12">
+                <h1>太大电影</h1>
+            </el-col>
+            <el-col :span="12">
+                <p v-if="!userName">
+                    <a href="javascript:void(0);" @click="visible = true;signIn = 1;formTitle= '注册'">注册</a>
+                    <span>&nbsp;|&nbsp;</span>
+                    <a href="javascript:void(0);" @click="visible = true;signIn = 0;formTitle= '登录'">登录</a>
+                </p>
+                <p v-else>欢迎您,{{userName}} <a href="javascript:void(0);" style="margin-left:1rem" @click="quitSign">退出</a></p>
+            </el-col>
+            <el-dialog v-model="visible" v-bind:title="formTitle">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="账号" prop="name">
+                        <el-input type="text" v-model="ruleForm.name" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="ruleForm.password" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <!--<el-form-item label="身份证号" prop="name">
+                        <el-input type="text" auto-complete="off"></el-input>
+                    </el-form-item>-->
+                    <el-form-item label="出生年份" prop="birthday" style="text-align:left;" v-if="signIn">
+                        <el-date-picker v-model="ruleForm.birthday" align="right" type="year">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                        <el-button @click="resetForm('ruleForm')">重置</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-dialog>
+        </el-row>
+    </div>
+    <div id="navbar">
+        <el-row>
+            <el-col :xs="19" :sm="15" :md="12" :offset="5">
+                <el-menu :default-active="activeIndex" class="el-menu-demo " mode="horizontal" @select="handleSelect">
+                    <el-menu-item index="0"><a href="/">首页</a></el-menu-item>
+                    <el-menu-item index="1">童年期</el-menu-item>
+                    <el-menu-item index="2">少年期</el-menu-item>
+                    <el-menu-item index="3">青年期</el-menu-item>
+                    <el-menu-item index="4">中年期</el-menu-item>
+                    <el-menu-item index="5">老年期</el-menu-item>
+                    <el-menu-item index="6">更多</el-menu-item>
+                </el-menu>
+            </el-col>
+            <el-col :span="3">
+                <el-autocomplete placeholder="搜索内容" icon="search" v-model="search" :fetch-suggestions="querySearchAsync" @keyup.native.enter="handleIconClick"
+                    @select="handleIconClick" :on-icon-click="handleIconClick">
+                </el-autocomplete>
+            </el-col>
+        </el-row>
+    </div>
+    <div class="content">
+        <div class="movieBox">
+            <div id="carousel" v-if="ifShow">
+                <template>
+                    <el-carousel :interval="4000" type="card" height="300px">
+                        <el-carousel-item v-for="item in allmovie">
+                            <div class="detailBox" v-bind:data-id="item._id">
+                                <img @click="goDetail(item._id)" v-bind:data-id="item._id" width="200" height="300" v-bind:src="item.poster" alt="海报">
+                            </div>
+                        </el-carousel-item>
+                    </el-carousel>
+                </template>
+            </div>
+            <div>
+                <div class="movies" v-show="ifShow">
+                    <ul>
+                        <template v-for="movie in allmovie">
+                            <li v-bind:data-id="movie._id" class="detailBox" @click="goDetail(movie._id)">
+                                <img width="200" height="300" v-bind:src="movie.poster" alt="海报">
+                                <p>{{movie.title}}</p>
+                            </li>
+                        </template>
+                        <p class="endLi" v-if="movieFlag">
+                            <i class="el-icon-loading"></i>
+                        </p>
+                        <span class="nomore" style="text-align: center;color: #333;float: left;width: 100%" v-if="endFlag">
+                            <h5>暂无更多数据！</h5>
+                        </span>
+                    </ul>
+                </div>
+                <div id="newMovie" v-show="ifShow">
+                    <h3>即将上映</h3>
+                    <ul>
+                        <template v-for="item in newmovies">
+                            <li v-bind:data-id="item._id" class="detailBox" @click="goDetail(item._id)">
+                                <img width="100" height="130" v-bind:src="item.poster" alt="海报">
+                                <p>{{item.title}}</p>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+            <div class="backTop" v-if="backTopflag && shouldTop">
+                <i class="el-icon-arrow-up" @click="flatScrollTo"></i>
+            </div>
+        </div>
+        <div class="details fadeIn" v-show="deFlag">
+            <div class="goback" @click="goback">
+                <span><i class="el-icon-caret-left"></i>回到前一页</span>
+            </div>
+            <div class="title">
+                <h3>{{detail.title}}<span style="color: #777">({{detail.year}})</span></h3>
+            </div>
+            <div class="content">
+                <img v-bind:src="detail.poster" alt="电影海报" width="300" height="500" style="float: left">
+                <div class="movieDetail">
+                    <span>电影评分</span>
+                    <el-rate v-model="detail.rating" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :allow-half=true text-template="{value}" disabled
+                        show-text disabled-void-color="#ccc">
+                    </el-rate>
+                    <p>导演:{{detail.directors||"未知"}}</p>
+                    <p>主演:<span v-for="man in detail.casts">{{man.name}}/</span><span>等</span></p>
+                    <p>类型:{{detail.genres||"未知"}}</p>
+                    <p>制片国家/地区:{{detail.country||"未知"}}</p>
+                    <p>又名:{{detail.aka||"未知"}}</p>
+                </div>
+                <div class="aboutMovie">
+                    <h3>电影简介</h3>
+                    <p style="text-indent: 2rem;">{{detail.summary}}</p>
+                </div>
+                <div class="comments">
+                    <h3>电影评论</h3>
+                    <template v-for="onecom in detail.comment">
+                        <div class="comment_box">
+                            <p>{{onecom.name}}</p>
+                            <p>{{onecom.content}}</p>
+                        </div>
+                    </template>
+                    <div style="text-align:left;">
+                        <h3 style="margin:1rem 0 2rem">发表评论</h3>
+                        <el-input type="textarea" :rows="5" placeholder="说两句..." v-model="textareaComment">
+                        </el-input>
+                        <el-button type="primary" size="small" style="margin:1rem 0 2rem" @click="submitComment()">发布</el-button>
+                    </div>
+                </div>
+                <div class="downLoadPath">
+                    <h3>下载地址</h3>
+                    <div v-if="detail.download_url" style="text-align:left;">
+                        <a v-bind:href="detail.download_url" style="color:cornflowerblue;text-decoration: underline;">下载地址</a>
+                    </div>
+                    <div v-else>
+                        <p>暂无数据</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="findResult" v-show="findFlag">
+            <div class="chooseCategroy">
+                <div class="find_bar">
+                    <h4 class="left_name">年龄分类:</h4>
+                    <ul class="right_cate">
+                        <template v-for="movie in newCategory">
+                            <li vlue="movie.index"><a href="Javascript:void(0);" @click="handleNewClick(movie.index)">{{movie.name}}</a></li>
+                        </template>
+                    </ul>
+                </div>
+                <div class="find_bar">
+                    <h4 class="left_name">类型分类:</h4>
+                    <ul class="right_cate">
+                        <li><a class="" href="Javascript:void(0);" title="喜剧" @click="handleCateClick">喜剧</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="爱情" @click="handleCateClick">爱情</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="战争" @click="handleCateClick">战争</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="科幻" @click="handleCateClick">科幻</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="动作" @click="handleCateClick">动作</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="动画" @click="handleCateClick">动画</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="剧情" @click="handleCateClick">剧情</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="纪录" @click="handleCateClick">纪录</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="犯罪" @click="handleCateClick">犯罪</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="冒险" @click="handleCateClick">冒险</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="传记" @click="handleCateClick">传记</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="恐怖" @click="handleCateClick">恐怖</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="悬疑" @click="handleCateClick">悬疑</a></li>
+                        <li><a class="" href="Javascript:void(0);" title="惊悚" @click="handleCateClick">惊悚</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="findContent">
+                <ul v-if="allResult.length">
+                    <template v-for="movie in allResult">
+                        <li v-bind:data-id="movie._id" class="resultMovieBox" @click="goDetail(movie._id)">
+                            <p class="movie_title">{{movie.title}}</p>
+                            <img width="60" height="80" v-bind:src="movie.poster" alt="海报">
+                            <div>
+                                <p>年份:{{movie.year}}年</p>
+                                <p>类型:{{movie.genres||"未知"}}</p>
+                                <p>导演:{{movie.directors||"未知"}}</p>
+                                <p>主演:<span v-for="man in JSON.parse(movie.casts)">{{man.name}}/</span><span>等</span></p>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+                <div v-else>
+                    <img src="./css/image/empt.png" alt="" width=150 height=150>
+                    <p style="margin-top:2rem;color:#999">未查到数据</p>
+                </div>
+                <!--<div class="block">
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage3" :page-size="100"
+                        layout="prev, pager, next, jumper" :total="1000">
+                    </el-pagination>
+                </div>-->
+            </div>
+        </div>
+    </div>
+    <div class="foot">
+        <p>Copyright &copy;2017&nbsp;何旭、李鹏出品</p>
+    </div>
+</body>
+<script src="js/vue.js"></script>
+<script src="js/vue-resource.js"></script>
+<script src="js/elementUI.js"></script>
+<!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+<script src="js/md5.js"></script>
+<script src="js/main.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/callAPI.js"></script>
+
+</html>
